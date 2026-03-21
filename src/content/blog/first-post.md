@@ -1,16 +1,143 @@
 ---
-title: 'First post'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 08 2022'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+title: '从零到上线：我用 OpenClaw + Astro 搭了个博客'
+description: '记录第一次用 Astro 搭建博客的全过程，包括踩坑、对话式开发、以及一个 AI 助手的吐槽'
+pubDate: '2026-03-21'
+heroImage: '../../assets/blog-placeholder-1.jpg'
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+## 起因
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc. Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra massa massa ultricies mi.
+想搞个博客记录学习过程，顺便做自媒体内容。本来想着随便找个 WordPress 或者 Hexo 凑合用，但巴乔助手（我的 AI 创业伙伴）说：「咱用 Astro 吧，现代化、性能好、还能练手。」
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+我说行，那就搞。
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id cursus metus aliquam eleifend mi.
+---
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+## 第一步：下载 Astro（踩坑版）
+
+我自信满满地打开了 GitHub，找到了 [Astro 官方仓库](https://github.com/withastro/astro)，点击下载 ZIP，解压到项目目录。
+
+然后跟巴乔助手说：「框架放好了，你看看。」
+
+**巴乔助手：** *沉默三秒* 「等等...这看起来不是 Astro 博客项目，而是 **Astro 框架本身的源码仓库**！」
+
+我一看，好家伙，80MB+，几千个文件，packages、benchmark、examples 啥都有。这是给想给 Astro 贡献代码的开发者用的，不是给我这种想搭博客的懒人用的。
+
+**踩坑记录 #1：** 别下载源码，用官方命令创建项目。
+
+---
+
+## 第二步：正确姿势创建项目
+
+清空目录，重新来：
+
+```bash
+npm create astro@latest
+```
+
+然后 Houston（Astro 的吉祥物）出现了：
+
+```
+astro   Launch sequence initiated.
+
+   dir   Where should we create your new project?
+         .
+
+  tmpl   How would you like to start your new project?
+         Use blog template
+
+  deps   Install dependencies?
+         No
+
+   git   Initialize a new git repository?
+         Yes
+
+      ✔  Project initialized!
+
+╭─────╮  Houston:
+│ ◠ ◡ ◠  Good luck out there, astronaut! 🚀
+╰─────╯
+```
+
+**巴乔助手：** 「看，这才对嘛。干净、简洁、适合人类使用。」
+
+---
+
+## 第三步：配置 Vercel 部署
+
+我们的部署方案是：
+- **GitHub** 托管代码
+- **Vercel** 自动构建部署
+- **Cloudflare** CDN 加速（后续配置）
+
+### 3.1 修改 astro.config.mjs
+
+把默认的 `example.com` 改成 Vercel 域名：
+
+```js
+export default defineConfig({
+  site: 'https://baggio-learning-log.vercel.app',
+  integrations: [mdx(), sitemap()],
+});
+```
+
+**巴乔助手：** 「不改也能运行，但 RSS 和 sitemap 生成的链接会是错的。细节决定成败。」
+
+### 3.2 推送到 GitHub
+
+创建仓库、配置 remote、推送：
+
+```bash
+git remote add origin https://github.com/stilllearningdev/baggio-learning-log.git
+git add -A
+git commit -m "Initial commit: Astro blog template with Vercel config"
+git push -u origin main
+```
+
+### 3.3 Vercel 一键部署
+
+1. 打开 [vercel.com](https://vercel.com)
+2. 用 GitHub 登录
+3. 导入 `baggio-learning-log` 仓库
+4. 保持默认配置，点击 Deploy
+5. 等待 30 秒...
+
+**🎉 上线！**
+
+访问 `https://baggio-learning-log.vercel.app`，看到 Astro 默认的博客模板， Houston 的笑脸仿佛在说我终于做对了。
+
+---
+
+## 技术栈总结
+
+| 层级 | 技术 | 作用 |
+|------|------|------|
+| 框架 | Astro | 静态站点生成，性能怪兽 |
+| 模板 | Astro Blog | 开箱即用，带 RSS、Sitemap |
+| 托管 | GitHub | 代码版本管理 |
+| 部署 | Vercel | 自动构建，全球 CDN |
+| 加速 | Cloudflare | 国内访问优化（待配置）|
+
+**成本：$0** 💰
+
+---
+
+## 下一步计划
+
+1. **换主题** — 默认模板太素了，找个好看的
+2. **写内容** — 这才是正经事
+3. **多平台发布** — 头条、小红书、B站同步
+4. **Cloudflare 加速** — 让国内访问更快
+5. **自定义域名** — 买个 `baqiao.dev` 或者类似的
+
+---
+
+## 写在最后
+
+这次搭建最大的收获不是技术，而是发现 **用 OpenClaw 对话式开发** 挺舒服的。有个 AI 伙伴在旁边提醒「你下错源码了」、「记得改 site 配置」、「先提交再推送」，比自己一个人瞎折腾效率高多了。
+
+当然，Houston 的 🚀 也很治愈。
+
+---
+
+*本文由巴乔学长和巴乔助手（OpenClaw + Kimi）共同创作*
