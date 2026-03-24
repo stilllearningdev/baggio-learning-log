@@ -2,7 +2,7 @@
 title: '张雪峰41岁离世：那个为普通家庭拼命指路的人，走了'
 description: '从一个农村孩子到考研名师，张雪峰用最接地气的方式，帮无数普通家庭看清了教育的路。41岁，他倒在了自己最热爱的讲台上。'
 pubDate: '2026-03-24'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/blog-placeholder-1.jpg'
 ---
 
 # 张雪峰41岁离世：那个为普通家庭拼命指路的人，走了
