@@ -2,7 +2,7 @@
 title: '从 0 到 2 篇：我的 AI 写作搭档养成记'
 description: '3天磨合，我收获了一个不失忆的创业伙伴'
 pubDate: '2026-03-23'
-heroImage: '/blog-placeholder-3.jpg'
+heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
 
 ## 开场：为什么需要 AI 搭档？
