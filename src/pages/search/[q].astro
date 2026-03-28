@@ -1,0 +1,179 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+
+const { q } = Astro.params;
+
+// 获取所有文章
+const allPosts = await getCollection('blog');
+
+// 搜索功能
+const query = q?.toLowerCase() || '';
+const posts = query 
+	? allPosts.filter(post => 
+		post.data.title.toLowerCase().includes(query) ||
+		post.data.description.toLowerCase().includes(query)
+	).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	: [];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`搜索: ${q} - ${SITE_TITLE}`} description={`搜索结果: ${q}`} />
+		<style>
+			:root {
+				--bg-color: #f5f5f5;
+				--card-bg: #ffffff;
+				--text-primary: #333333;
+				--text-secondary: #666666;
+				--accent: #ff6b6b;
+			}
+			
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--bg-color: #1a1a1a;
+					--card-bg: #2d2d2d;
+					--text-primary: #e0e0e0;
+					--text-secondary: #a0a0a0;
+					--accent: #ff8e8e;
+				}
+			}
+			
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-primary);
+				margin: 0;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			}
+			
+			main {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 2rem 1rem;
+			}
+			
+			.search-form {
+				margin-bottom: 2rem;
+			}
+			
+			.search-input {
+				width: 100%;
+				padding: 1rem;
+				font-size: 1rem;
+				border: 2px solid var(--card-bg);
+				border-radius: 12px;
+				background: var(--card-bg);
+				color: var(--text-primary);
+				outline: none;
+				transition: border-color 0.3s;
+			}
+			
+			.search-input:focus {
+				border-color: var(--accent);
+			}
+			
+			.result-count {
+				color: var(--text-secondary);
+				margin-bottom: 1.5rem;
+			}
+			
+			.search-result {
+				background: var(--card-bg);
+				border-radius: 12px;
+				padding: 1.2rem;
+				margin-bottom: 1rem;
+				transition: transform 0.3s;
+			}
+			
+			.search-result:hover {
+				transform: translateX(5px);
+			}
+			
+			.search-result a {
+				text-decoration: none;
+				color: inherit;
+				display: block;
+			}
+			
+			.search-result .title {
+				font-size: 1.1rem;
+				font-weight: 600;
+				margin: 0 0 0.5rem 0;
+				color: var(--accent);
+			}
+			
+			.search-result .description {
+				font-size: 0.9rem;
+				color: var(--text-secondary);
+				margin: 0 0 0.5rem 0;
+				line-height: 1.6;
+			}
+			
+			.search-result .date {
+				font-size: 0.8rem;
+				color: var(--text-secondary);
+			}
+			
+			.empty, .no-result {
+				text-align: center;
+				color: var(--text-secondary);
+				padding: 3rem;
+			}
+		</style>
+		<script>
+			function doSearch() {
+				const input = document.getElementById('search-input');
+				const query = input.value.trim();
+				if (query) {
+					window.location.href = `/search/${encodeURIComponent(query)}`;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>🔍 搜索</h1>
+			
+			<div class="search-form">
+				<input 
+					type="text" 
+					id="search-input"
+					class="search-input"
+					placeholder="输入关键词搜索文章..."
+					value={q}
+					onkeypress="if(event.key==='Enter')doSearch()"
+				/>
+			</div>
+			
+			{query ? (
+				<>
+					<p class="result-count">找到 {posts.length} 篇相关文章</p>
+					
+					{posts.length > 0 ? (
+						<div class="results">
+							{posts.map(post => (
+								<div class="search-result">
+									<a href={`/blog/${post.id}/`}>
+										<h2 class="title">{post.data.title}</h2>
+										<p class="description">{post.data.description}</p>
+										<p class="date">📅 {post.data.pubDate.toLocaleDateString('zh-CN')}</p>
+									</a>
+								</div>
+							))}
+						</div>
+					) : (
+						<p class="no-result">没有找到相关文章，请尝试其他关键词</p>
+					)}
+				</>
+			) : (
+				<p class="empty">输入关键词开始搜索</p>
+			)}
+		</main>
+		<Footer />
+	</body>
+</html>
