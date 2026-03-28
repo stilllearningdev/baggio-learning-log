@@ -170,7 +170,7 @@ const posts = (await getCollection('blog')).sort(
 										<Image 
 											width={400} 
 											height={250} 
-											src={post.data.heroImage} 
+											src={`https://picsum.photos/seed/${post.id}/400/250`} 
 											alt={post.data.title}
 										/>
 									)}
