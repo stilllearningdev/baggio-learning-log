@@ -1,48 +1,238 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// 取最新6篇文章
+const recentPosts = posts.slice(0, 6);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			/* 暗色主题 */
+			:root {
+				--bg-color: #f5f5f5;
+				--card-bg: #ffffff;
+				--text-primary: #333333;
+				--text-secondary: #666666;
+				--accent: #ff6b6b;
+				--header-bg: #ffffff;
+				--border-color: #e0e0e0;
+			}
+			
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--bg-color: #1a1a1a;
+					--card-bg: #2d2d2d;
+					--text-primary: #e0e0e0;
+					--text-secondary: #a0a0a0;
+					--accent: #ff8e8e;
+					--header-bg: #252525;
+					--border-color: #3d3d3d;
+				}
+			}
+			
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-primary);
+				transition: background-color 0.3s, color 0.3s;
+				margin: 0;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+			}
+			
+			main {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 2rem;
+			}
+			
+			/* 首页Hero区域 */
+			.hero {
+				text-align: center;
+				padding: 3rem 1rem;
+				background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
+				border-radius: 24px;
+				margin-bottom: 2rem;
+			}
+			
+			.hero h1 {
+				font-size: 2.5rem;
+				margin: 0 0 1rem 0;
+				background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			
+			.hero p {
+				font-size: 1.2rem;
+				color: var(--text-secondary);
+				margin: 0;
+			}
+			
+			.section-title {
+				font-size: 1.5rem;
+				margin: 2rem 0 1.5rem 0;
+				padding-left: 1rem;
+				border-left: 4px solid var(--accent);
+				color: var(--text-primary);
+			}
+			
+			/* 瀑布流布局 */
+			.masonry-grid {
+				column-count: 3;
+				column-gap: 1rem;
+			}
+			
+			.masonry-item {
+				break-inside: avoid;
+				margin-bottom: 1rem;
+				background: var(--card-bg);
+				border-radius: 16px;
+				overflow: hidden;
+				transition: transform 0.3s ease, box-shadow 0.3s ease;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+			}
+			
+			.masonry-item:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+			}
+			
+			.masonry-item img {
+				width: 100%;
+				height: auto;
+				display: block;
+			}
+			
+			.masonry-content {
+				padding: 1.2rem;
+			}
+			
+			.masonry-item .title {
+				font-size: 1.1rem;
+				font-weight: 600;
+				color: var(--text-primary);
+				margin: 0 0 0.5rem 0;
+				line-height: 1.4;
+			}
+			
+			.masonry-item .description {
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+				margin: 0 0 0.8rem 0;
+				line-height: 1.6;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			
+			.masonry-item .date {
+				font-size: 0.8rem;
+				color: var(--text-secondary);
+			}
+			
+			.masonry-item a {
+				text-decoration: none;
+				color: inherit;
+				display: block;
+			}
+			
+			/* 更多文章链接 */
+			.more-link {
+				display: block;
+				text-align: center;
+				padding: 1rem;
+				margin-top: 2rem;
+				background: var(--card-bg);
+				border-radius: 12px;
+				color: var(--accent);
+				text-decoration: none;
+				font-weight: 600;
+				transition: opacity 0.3s;
+			}
+			
+			.more-link:hover {
+				opacity: 0.8;
+			}
+			
+			/* 移动端适配 */
+			@media (max-width: 900px) {
+				.masonry-grid {
+					column-count: 2;
+				}
+				.hero h1 {
+					font-size: 2rem;
+				}
+			}
+			
+			@media (max-width: 600px) {
+				.masonry-grid {
+					column-count: 1;
+				}
+				main {
+					padding: 1rem;
+				}
+				.hero {
+					padding: 2rem 1rem;
+				}
+				.hero h1 {
+					font-size: 1.8rem;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<!-- Hero区域 -->
+			<section class="hero">
+				<h1>🚀 Baggio Learning Log</h1>
+				<p>记录 AI、OpenClaw、Astro 开发路上的折腾与思考</p>
+			</section>
+			
+			<!-- 最新文章 -->
+			<h2 class="section-title">📰 最新文章</h2>
+			<div class="masonry-grid">
+				{
+					recentPosts.map((post) => (
+						<article class="masonry-item">
+							<a href={`/blog/${post.id}/`}>
+								{post.data.heroImage && (
+									<Image 
+										width={400} 
+										height={250} 
+										src={post.data.heroImage} 
+										alt={post.data.title}
+									/>
+								)}
+								<div class="masonry-content">
+									<h2 class="title">{post.data.title}</h2>
+									<p class="description">{post.data.description}</p>
+									<p class="date">
+										📅 <FormattedDate date={post.data.pubDate} />
+									</p>
+								</div>
+							</a>
+						</article>
+					))
+				}
+			</div>
+			
+			<!-- 查看更多 -->
+			<a href="/blog/" class="more-link">查看更多文章 →</a>
 		</main>
 		<Footer />
 	</body>
