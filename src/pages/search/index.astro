@@ -3,24 +3,22 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { SITE_TITLE } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
+// 获取所有文章，传递给客户端
 const allPosts = await getCollection('blog');
-const postsData = allPosts
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.map(post => ({
-		id: post.id,
-		title: post.data.title,
-		description: post.data.description || '',
-		date: post.data.pubDate.toLocaleDateString('zh-CN'),
-		url: `/blog/${post.id}/`,
-	}));
+const postsData = allPosts.map(post => ({
+	id: post.id,
+	title: post.data.title,
+	description: post.data.description,
+	pubDate: post.data.pubDate.toISOString()
+}));
 ---
 
 <!doctype html>
 <html lang="zh-CN">
 	<head>
-		<BaseHead title={`搜索 - ${SITE_TITLE}`} description="搜索文章" />
+		<BaseHead title={`搜索 - ${SITE_TITLE}`} description={`搜索文章`} />
 		<style>
 			:root {
 				--bg-color: #f5f5f5;
@@ -29,6 +27,7 @@ const postsData = allPosts
 				--text-secondary: #666666;
 				--accent: #ff6b6b;
 			}
+			
 			@media (prefers-color-scheme: dark) {
 				:root {
 					--bg-color: #1a1a1a;
@@ -38,17 +37,24 @@ const postsData = allPosts
 					--accent: #ff8e8e;
 				}
 			}
+			
 			body {
 				background-color: var(--bg-color);
 				color: var(--text-primary);
 				margin: 0;
 				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 			}
+			
 			main {
 				max-width: 800px;
 				margin: 0 auto;
 				padding: 2rem 1rem;
 			}
+			
+			.search-form {
+				margin-bottom: 2rem;
+			}
+			
 			.search-input {
 				width: 100%;
 				padding: 1rem;
@@ -59,122 +65,138 @@ const postsData = allPosts
 				color: var(--text-primary);
 				outline: none;
 				transition: border-color 0.3s;
-				box-sizing: border-box;
-				margin-bottom: 1.5rem;
 			}
+			
 			.search-input:focus {
 				border-color: var(--accent);
 			}
+			
 			.result-count {
 				color: var(--text-secondary);
-				margin-bottom: 1rem;
-				font-size: 0.9rem;
+				margin-bottom: 1.5rem;
 			}
+			
 			.search-result {
 				background: var(--card-bg);
 				border-radius: 12px;
 				padding: 1.2rem;
 				margin-bottom: 1rem;
-				transition: transform 0.2s;
+				transition: transform 0.3s;
 			}
+			
 			.search-result:hover {
 				transform: translateX(5px);
 			}
+			
 			.search-result a {
 				text-decoration: none;
 				color: inherit;
 				display: block;
 			}
-			.result-title {
+			
+			.search-result .title {
 				font-size: 1.1rem;
 				font-weight: 600;
-				margin: 0 0 0.4rem 0;
+				margin: 0 0 0.5rem 0;
 				color: var(--accent);
 			}
-			.result-desc {
+			
+			.search-result .description {
 				font-size: 0.9rem;
 				color: var(--text-secondary);
-				margin: 0 0 0.4rem 0;
+				margin: 0 0 0.5rem 0;
 				line-height: 1.6;
 			}
-			.result-date {
+			
+			.search-result .date {
 				font-size: 0.8rem;
 				color: var(--text-secondary);
 			}
-			.hint {
+			
+			.empty, .no-result {
 				text-align: center;
 				color: var(--text-secondary);
 				padding: 3rem;
 			}
-			#results-container { display: none; }
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
 			<h1>🔍 搜索</h1>
-			<input
-				type="text"
-				id="search-input"
-				class="search-input"
-				placeholder="输入关键词搜索文章..."
-				autofocus
-			/>
-			<p id="hint" class="hint">输入关键词开始搜索</p>
-			<div id="results-container">
-				<p id="result-count" class="result-count"></p>
-				<div id="results-list"></div>
+			
+			<div class="search-form">
+				<input 
+					type="text" 
+					id="search-input"
+					class="search-input"
+					placeholder="输入关键词搜索文章..."
+				/>
 			</div>
+			
+			<div id="results-container"></div>
+			
+			<script define:vars={{ postsData }}>
+				const posts = postsData;
+				const input = document.getElementById('search-input');
+				const container = document.getElementById('results-container');
+				
+				// 从URL获取初始查询参数
+				const urlParams = new URLSearchParams(window.location.search);
+				const initialQuery = urlParams.get('q') || '';
+				if (initialQuery) {
+					input.value = initialQuery;
+					performSearch(initialQuery);
+				}
+				
+				input.addEventListener('input', function(e) {
+					const query = this.value.trim();
+					// 更新URL
+					if (query) {
+						window.history.replaceState({}, '', `?q=${encodeURIComponent(query)}`);
+					} else {
+						window.history.replaceState({}, '', window.location.pathname);
+					}
+					performSearch(query);
+				});
+				
+				function performSearch(query) {
+					if (!query) {
+						container.innerHTML = '<p class="empty">输入关键词开始搜索</p>';
+						return;
+					}
+					
+					const lowerQuery = query.toLowerCase();
+					const results = posts.filter(post => 
+						post.title.toLowerCase().includes(lowerQuery) ||
+						post.description.toLowerCase().includes(lowerQuery)
+					);
+					
+					if (results.length === 0) {
+						container.innerHTML = '<p class="no-result">没有找到相关文章，请尝试其他关键词</p>';
+						return;
+					}
+					
+					let html = `<p class="result-count">找到 ${results.length} 篇相关文章</p><div class="results">`;
+					
+					results.forEach(post => {
+						const date = new Date(post.pubDate);
+						html += `
+							<div class="search-result">
+								<a href="/blog/${post.id}/">
+									<h2 class="title">${post.title}</h2>
+									<p class="description">${post.description}</p>
+									<p class="date">📅 ${date.toLocaleDateString('zh-CN')}</p>
+								</a>
+							</div>
+						`;
+					});
+					
+					html += '</div>';
+					container.innerHTML = html;
+				}
+			</script>
 		</main>
 		<Footer />
-
-		<script define:vars={{ postsData }}>
-			const input = document.getElementById('search-input');
-			const hint = document.getElementById('hint');
-			const container = document.getElementById('results-container');
-			const countEl = document.getElementById('result-count');
-			const listEl = document.getElementById('results-list');
-
-			// 从 URL 参数读取初始关键词
-			const params = new URLSearchParams(window.location.search);
-			const initQ = params.get('q') || '';
-			if (initQ) {
-				input.value = initQ;
-				doSearch(initQ);
-			}
-
-			input.addEventListener('input', () => doSearch(input.value.trim()));
-
-			function doSearch(query) {
-				if (!query) {
-					hint.style.display = 'block';
-					container.style.display = 'none';
-					return;
-				}
-				hint.style.display = 'none';
-				container.style.display = 'block';
-
-				const q = query.toLowerCase();
-				const matched = postsData.filter(p =>
-					p.title.toLowerCase().includes(q) ||
-					p.description.toLowerCase().includes(q)
-				);
-
-				countEl.textContent = `找到 ${matched.length} 篇相关文章`;
-				if (matched.length === 0) {
-					listEl.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:2rem">没有找到相关文章，请尝试其他关键词</p>';
-					return;
-				}
-				listEl.innerHTML = matched.map(p => `
-					<div class="search-result">
-						<a href="${p.url}">
-							<h2 class="result-title">${p.title}</h2>
-							<p class="result-desc">${p.description}</p>
-							<p class="result-date">📅 ${p.date}</p>
-						</a>
-					</div>
-				`).join('');
-			}
-		</script>
 	</body>
 </html>
