@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
@@ -211,11 +210,12 @@ const recentPosts = posts.slice(0, 6);
 						<article class="masonry-item">
 							<a href={`/blog/${post.id}/`}>
 								{post.data.heroImage && (
-									<Image 
-										width={400} 
-										height={250} 
-										src={`https://picsum.photos/seed/${post.id}/400/250`} 
+									<img
+										width="400"
+										height="250"
+										src={post.data.heroImage}
 										alt={post.data.title}
+										loading="lazy"
 									/>
 								)}
 								<div class="masonry-content">

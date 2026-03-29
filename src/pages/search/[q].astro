@@ -124,15 +124,6 @@ const posts = query
 				padding: 3rem;
 			}
 		</style>
-		<script>
-			function doSearch() {
-				const input = document.getElementById('search-input');
-				const query = input.value.trim();
-				if (query) {
-					window.location.href = `/search/${encodeURIComponent(query)}`;
-				}
-			}
-		</script>
 	</head>
 	<body>
 		<Header />
@@ -146,9 +137,20 @@ const posts = query
 					class="search-input"
 					placeholder="输入关键词搜索文章..."
 					value={q}
-					onkeypress="if(event.key==='Enter')doSearch()"
+				/>
 				/>
 			</div>
+			
+			<script>
+				document.getElementById('search-input').addEventListener('keypress', function(e) {
+					if (e.key === 'Enter') {
+						const query = this.value.trim();
+						if (query) {
+							window.location.href = `/search/${encodeURIComponent(query)}`;
+						}
+					}
+				});
+			</script>
 			
 			{query ? (
 				<>
