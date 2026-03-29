@@ -2,7 +2,7 @@
 title: '黄金大买家开始抛售，这次"避险神话"要破了吗？'
 description: '黄金被无数人视为乱世硬通货，但最近市场出现了一个让神经紧绷的信号——曾经疯狂扫货的大买家，开始悄悄出货了。'
 pubDate: '2026-03-27'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: 'https://picsum.photos/seed/gold/800/400'
 tags: ['财经', '黄金', '投资', '热点']
 ---
 

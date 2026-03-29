@@ -2,7 +2,7 @@
 title: 'OpenClaw爆火背后：AI助手如何改变开发者的工作方式'
 description: '最近，一个名叫OpenClaw的开源AI助手项目在GitHub上火了。'
 pubDate: '2026-03-26'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: 'https://picsum.photos/seed/ai-writing/800/400'
 tags: ['AI', 'OpenClaw', '技术', '开发']
 ---
 

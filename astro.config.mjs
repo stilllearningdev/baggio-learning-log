@@ -8,4 +8,7 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://baggio-learning-log.vercel.app',
 	integrations: [mdx(), sitemap()],
+	image: {
+		domains: ['picsum.photos'],
+	},
 });

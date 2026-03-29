@@ -2,7 +2,7 @@
 title: '数千人凌晨排队送别张雪峰：那个帮普通人指路的人，走了'
 description: '2026年3月28日清晨，苏州殡仪馆外排起千米长队，数千人自发送别张雪峰老师。'
 pubDate: '2026-03-28'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: 'https://picsum.photos/seed/zhang/800/400'
 tags: ['教育', '热点', '张雪峰']
 ---
 
