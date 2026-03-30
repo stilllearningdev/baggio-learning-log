@@ -18,222 +18,69 @@ const recentPosts = posts.slice(0, 6);
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			/* 暗色主题 */
-			:root {
-				--bg-color: #f5f5f5;
-				--card-bg: #ffffff;
-				--text-primary: #333333;
-				--text-secondary: #666666;
-				--accent: #ff6b6b;
-				--header-bg: #ffffff;
-				--border-color: #e0e0e0;
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				:root {
-					--bg-color: #1a1a1a;
-					--card-bg: #2d2d2d;
-					--text-primary: #e0e0e0;
-					--text-secondary: #a0a0a0;
-					--accent: #ff8e8e;
-					--header-bg: #252525;
-					--border-color: #3d3d3d;
-				}
-			}
-			
-			body {
-				background-color: var(--bg-color);
-				color: var(--text-primary);
-				transition: background-color 0.3s, color 0.3s;
-				margin: 0;
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-			}
-			
-			main {
-				max-width: 1200px;
-				margin: 0 auto;
-				padding: 2rem;
-			}
-			
-			/* 首页Hero区域 */
-			.hero {
-				text-align: center;
-				padding: 3rem 1rem;
-				background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
-				border-radius: 24px;
-				margin-bottom: 2rem;
-			}
-			
-			.hero h1 {
-				font-size: 2.5rem;
-				margin: 0 0 1rem 0;
-				background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
-			}
-			
-			.hero p {
-				font-size: 1.2rem;
-				color: var(--text-secondary);
-				margin: 0;
-			}
-			
-			.section-title {
-				font-size: 1.5rem;
-				margin: 2rem 0 1.5rem 0;
-				padding-left: 1rem;
-				border-left: 4px solid var(--accent);
-				color: var(--text-primary);
-			}
-			
-			/* 瀑布流布局 */
-			.masonry-grid {
-				column-count: 3;
-				column-gap: 1rem;
-			}
-			
-			.masonry-item {
-				break-inside: avoid;
-				margin-bottom: 1rem;
-				background: var(--card-bg);
-				border-radius: 16px;
-				overflow: hidden;
-				transition: transform 0.3s ease, box-shadow 0.3s ease;
-				box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-			}
-			
-			.masonry-item:hover {
-				transform: translateY(-5px);
-				box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-			}
-			
-			.masonry-item img {
-				width: 100%;
-				height: auto;
-				display: block;
-			}
-			
-			.masonry-content {
-				padding: 1.2rem;
-			}
-			
-			.masonry-item .title {
-				font-size: 1.1rem;
-				font-weight: 600;
-				color: var(--text-primary);
-				margin: 0 0 0.5rem 0;
-				line-height: 1.4;
-			}
-			
-			.masonry-item .description {
-				font-size: 0.85rem;
-				color: var(--text-secondary);
-				margin: 0 0 0.8rem 0;
-				line-height: 1.6;
-				display: -webkit-box;
-				-webkit-line-clamp: 2;
-				-webkit-box-orient: vertical;
-				overflow: hidden;
-			}
-			
-			.masonry-item .date {
-				font-size: 0.8rem;
-				color: var(--text-secondary);
-			}
-			
-			.masonry-item a {
-				text-decoration: none;
-				color: inherit;
-				display: block;
-			}
-			
-			/* 更多文章链接 */
-			.more-link {
-				display: block;
-				text-align: center;
-				padding: 1rem;
-				margin-top: 2rem;
-				background: var(--card-bg);
-				border-radius: 12px;
-				color: var(--accent);
-				text-decoration: none;
-				font-weight: 600;
-				transition: opacity 0.3s;
-			}
-			
-			.more-link:hover {
-				opacity: 0.8;
-			}
-			
-			/* 移动端适配 */
-			@media (max-width: 900px) {
-				.masonry-grid {
-					column-count: 2;
-				}
-				.hero h1 {
-					font-size: 2rem;
-				}
-			}
-			
-			@media (max-width: 600px) {
-				.masonry-grid {
-					column-count: 1;
-				}
-				main {
-					padding: 1rem;
-				}
-				.hero {
-					padding: 2rem 1rem;
-				}
-				.hero h1 {
-					font-size: 1.8rem;
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<!-- Hero区域 -->
-			<section class="hero">
-				<h1>🚀 Baggio Learning Log</h1>
-				<p>记录 AI、OpenClaw、Astro 开发路上的折腾与思考</p>
-			</section>
-			
-			<!-- 最新文章 -->
-			<h2 class="section-title">📰 最新文章</h2>
-			<div class="masonry-grid">
-				{
-					recentPosts.map((post) => (
-						<article class="masonry-item">
-							<a href={`/blog/${post.id}/`}>
-								{post.data.heroImage && (
-									<img
-										width="400"
-										height="250"
-										src={post.data.heroImage}
-										alt={post.data.title}
-										loading="lazy"
-									/>
-								)}
-								<div class="masonry-content">
-									<h2 class="title">{post.data.title}</h2>
-									<p class="description">{post.data.description}</p>
-									<p class="date">
-										📅 <FormattedDate date={post.data.pubDate} />
-									</p>
-								</div>
-							</a>
-						</article>
-					))
-				}
+		
+		<!-- Hero Section -->
+		<section class="hero">
+			<div class="hero-content">
+				<h1>记录学习与创造的<span class="text-gradient">每一步</span></h1>
+				<p>AI · OpenClaw · Astro · 网站开发</p>
+				<div style="margin-top: 2rem;">
+					<a href="/blog/" class="btn btn-secondary">浏览文章</a>
+					<a href="/about/" class="btn btn-outline" style="margin-left: 1rem;">关于我</a>
+				</div>
 			</div>
-			
-			<!-- 查看更多 -->
-			<a href="/blog/" class="more-link">查看更多文章 →</a>
+		</section>
+		
+		<main class="container">
+			<!-- 最新文章 -->
+			<section class="section">
+				<div class="section-title">
+					<h2>最新文章</h2>
+					<p>探索技术、分享经验、记录成长</p>
+				</div>
+				
+				<div class="card-grid">
+					{
+						recentPosts.map((post) => (
+							<article class="card post-card">
+								<a href={`/blog/${post.id}/`}>
+									{post.data.heroImage && (
+										<img
+											class="post-card-image"
+											src={post.data.heroImage}
+											alt={post.data.title}
+											loading="lazy"
+										/>
+									)}
+								</a>
+								<div class="post-card-meta">
+									<FormattedDate date={post.data.pubDate} />
+								</div>
+								<h3 class="post-card-title">
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								</h3>
+								<p class="post-card-description">{post.data.description}</p>
+								{post.data.tags && (
+									<div class="post-card-tags">
+										{post.data.tags.slice(0, 3).map((tag) => (
+											<a href={`/tags/${tag}/`} class="tag">{tag}</a>
+										))}
+									</div>
+								)}
+							</article>
+						))
+					}
+				</div>
+				
+				<div style="text-align: center; margin-top: 3rem;">
+					<a href="/blog/" class="btn btn-primary">查看全部文章</a>
+				</div>
+			</section>
 		</main>
+		
 		<Footer />
 	</body>
 </html>
