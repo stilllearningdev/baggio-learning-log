@@ -7,80 +7,300 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-// 取最新6篇文章
 const recentPosts = posts.slice(0, 6);
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		
-		<!-- Hero Section -->
-		<section class="hero">
-			<div class="hero-content">
-				<h1>记录学习与创造的<span class="text-gradient">每一步</span></h1>
-				<p>AI · OpenClaw · Astro · 网站开发</p>
-				<div style="margin-top: 2rem;">
-					<a href="/blog/" class="btn btn-secondary">浏览文章</a>
-					<a href="/about/" class="btn btn-outline" style="margin-left: 1rem;">关于我</a>
-				</div>
-			</div>
-		</section>
-		
-		<main class="container">
-			<!-- 最新文章 -->
-			<section class="section">
-				<div class="section-title">
-					<h2>最新文章</h2>
-					<p>探索技术、分享经验、记录成长</p>
-				</div>
-				
-				<div class="card-grid">
-					{
-						recentPosts.map((post) => (
-							<article class="card post-card">
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<img
-											class="post-card-image"
-											src={post.data.heroImage}
-											alt={post.data.title}
-											loading="lazy"
-										/>
-									)}
-								</a>
-								<div class="post-card-meta">
-									<FormattedDate date={post.data.pubDate} />
-								</div>
-								<h3 class="post-card-title">
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-								</h3>
-								<p class="post-card-description">{post.data.description}</p>
-								{post.data.tags && (
-									<div class="post-card-tags">
-										{post.data.tags.slice(0, 3).map((tag) => (
-											<a href={`/tags/${tag}/`} class="tag">{tag}</a>
-										))}
-									</div>
-								)}
-							</article>
-						))
-					}
-				</div>
-				
-				<div style="text-align: center; margin-top: 3rem;">
-					<a href="/blog/" class="btn btn-primary">查看全部文章</a>
-				</div>
-			</section>
-		</main>
-		
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main class="page-enter">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-badge">Open Source · AI · Web Dev</div>
+        <h1 class="hero-title">
+          Baggio<br /><span class="accent">Learning Log</span>
+        </h1>
+        <p class="hero-desc">{SITE_DESCRIPTION}</p>
+        <div class="hero-actions">
+          <a href="/blog" class="btn-primary">Read Blog →</a>
+          <a href="/about" class="btn-ghost">About Me</a>
+        </div>
+      </section>
+
+      <!-- Recent Posts -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Recent Posts</h2>
+          <a href="/blog" class="view-all">View all →</a>
+        </div>
+        <div class="post-grid">
+          {
+            recentPosts.map((post) => (
+              <a href={`/blog/${post.id}/`} class="post-card">
+                <div class="post-card-image">
+                  <img
+                    src={post.data.heroImage || `https://picsum.photos/seed/${post.id}/600/340`}
+                    alt={post.data.title}
+                    loading="lazy"
+                  />
+                </div>
+                <div class="post-card-body">
+                  <div class="post-card-meta">
+                    <FormattedDate date={post.data.pubDate} />
+                    {post.data.tags && post.data.tags.length > 0 && (
+                      <span class="post-card-tags">
+                        {post.data.tags.slice(0, 2).map(tag => (
+                          <span class="mini-tag">{tag}</span>
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                  <h3 class="post-card-title">{post.data.title}</h3>
+                  <p class="post-card-desc">{post.data.description}</p>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>
+
+<style>
+  /* Hero */
+  .hero {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 5rem 1.5rem 4rem;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.3rem 0.9rem;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-title .accent {
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.5rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .btn-primary:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+    color: var(--bg-primary);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.5rem;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: border-color var(--transition), color var(--transition);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--text-tertiary);
+    color: var(--text-primary);
+  }
+
+  /* Section */
+  .section {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .view-all {
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition);
+  }
+
+  .view-all:hover {
+    color: var(--accent);
+  }
+
+  /* Post Grid */
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .post-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  }
+
+  .post-card:hover {
+    border-color: var(--border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: inherit;
+  }
+
+  .post-card-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .post-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .post-card:hover .post-card-image img {
+    transform: scale(1.03);
+  }
+
+  .post-card-body {
+    padding: 1.25rem;
+  }
+
+  .post-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  .post-card-tags {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .mini-tag {
+    color: var(--text-tertiary);
+  }
+
+  .post-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .post-card-desc {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .hero-title {
+      font-size: 2.75rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero {
+      padding: 3rem 1rem 2.5rem;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+    }
+    .hero-desc {
+      font-size: 1rem;
+    }
+    .section {
+      padding: 0 1rem 3rem;
+    }
+  }
+</style>

@@ -3,18 +3,71 @@ const today = new Date();
 ---
 
 <footer>
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="/">首页</a>
-        <a href="/blog/">文章</a>
-        <a href="/tags/">标签</a>
-        <a href="/about/">关于</a>
-        <a href="https://github.com/stilllearningdev/baggio-learning-log" target="_blank">GitHub</a>
-      </div>
-      <p class="footer-copyright">
-        &copy; {today.getFullYear()} Baggio Learning Log. All rights reserved.
-      </p>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span class="footer-logo">⟐ Baggio Learning Log</span>
+      <p class="footer-desc">记录 AI、OpenClaw、Astro 开发路上的折腾与思考</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/stilllearningdev/baggio-learning-log" target="_blank" rel="noopener">GitHub</a>
+      <a href="/rss.xml">RSS</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {today.getFullYear()} Baggio Learning Log. Built with Astro.</p>
     </div>
   </div>
 </footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border-dim);
+    margin-top: 4rem;
+  }
+
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 2rem;
+  }
+
+  .footer-logo {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .footer-desc {
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--text-secondary);
+  }
+
+  .footer-bottom {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-dim);
+  }
+
+  .footer-bottom p {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    margin: 0;
+  }
+</style>

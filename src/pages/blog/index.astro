@@ -4,63 +4,190 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-	<head>
-		<BaseHead title={`文章列表 - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		
-		<main class="container">
-			<div class="article-header">
-				<h1 class="article-title">文章列表</h1>
-				<p style="color: var(--text-secondary);">共 {posts.length} 篇文章</p>
-			</div>
-			
-			<section class="section" style="padding-top: 0;">
-				<div class="card-grid">
-					{
-						posts.map((post) => (
-							<article class="card post-card">
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<img
-											class="post-card-image"
-											src={post.data.heroImage}
-											alt={post.data.title}
-											loading="lazy"
-										/>
-									)}
-								</a>
-								<div class="post-card-meta">
-									<FormattedDate date={post.data.pubDate} />
-								</div>
-								<h3 class="post-card-title">
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-								</h3>
-								<p class="post-card-description">{post.data.description}</p>
-								{post.data.tags && (
-									<div class="post-card-tags">
-										{post.data.tags.slice(0, 3).map((tag) => (
-											<a href={`/tags/${tag}/`} class="tag">{tag}</a>
-										))}
-									</div>
-								)}
-							</article>
-						))
-					}
-				</div>
-			</section>
-		</main>
-		
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={`Blog - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main class="page-enter">
+      <section class="blog-page">
+        <div class="blog-header">
+          <h1>Blog</h1>
+          <p class="blog-desc">{posts.length} posts about AI, OpenClaw, Astro & more</p>
+        </div>
+        <div class="post-list">
+          {
+            posts.map((post) => (
+              <a href={`/blog/${post.id}/`} class="post-row">
+                <div class="post-row-content">
+                  <div class="post-row-meta">
+                    <time class="post-date">{post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+                    {post.data.tags && post.data.tags.length > 0 && (
+                      <div class="post-row-tags">
+                        {post.data.tags.slice(0, 3).map(tag => (
+                          <a href={`/tags/${encodeURIComponent(tag)}/`} class="row-tag">{tag}</a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <h2 class="post-row-title">{post.data.title}</h2>
+                  <p class="post-row-desc">{post.data.description}</p>
+                </div>
+                <div class="post-row-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>
+
+<style>
+  .blog-page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .blog-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .blog-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+  }
+
+  .blog-desc {
+    color: var(--text-tertiary);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-dim);
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--transition);
+  }
+
+  .post-row:first-child {
+    border-top: 1px solid var(--border-dim);
+  }
+
+  .post-row:hover {
+    color: inherit;
+  }
+
+  .post-row-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.35rem;
+  }
+
+  .post-row-tags {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .row-tag {
+    color: var(--text-tertiary) !important;
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .row-tag:hover {
+    color: var(--accent) !important;
+  }
+
+  .post-row-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.01em;
+  }
+
+  .post-row:hover .post-row-title {
+    color: var(--accent);
+  }
+
+  .post-row-desc {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-row-arrow {
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .post-row:hover .post-row-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (max-width: 768px) {
+    .blog-page {
+      padding: 2rem 1rem 3rem;
+    }
+
+    .blog-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .post-row {
+      padding: 1.25rem 0;
+    }
+
+    .post-row-arrow {
+      display: none;
+    }
+  }
+</style>
